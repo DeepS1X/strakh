@@ -31,6 +31,7 @@ iptables -A UDP -p udp --dport 68 -j ACCEPT
 # Add additional ports to keep open here
 # .......
 # .......
+mkdir /etc/iptables
 iptables-save > /etc/iptables/iptables.rules
 iptables-save > /etc/iptables/ip6tables.rules
 
