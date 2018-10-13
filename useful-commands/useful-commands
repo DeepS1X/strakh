@@ -1,4 +1,7 @@
 
+# CHANGE ALL THE PASSWORDS THAT YOU ARE PERMITTED TO
+# Then lock any accounts we aren't using.
+# Oh, and don't forget to harden services while you are doing this malware hunting/sysadmining
 # Locks an account
 passwd -l [Username]
 # Unlock an account
