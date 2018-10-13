@@ -1,16 +1,21 @@
+import sys
 from pwn import *
 context.log_level="warning"
-#print s.uname("-a") #how to execute commands, or u can use run_to_end
-#print s.distro #will be sth like ('Raspbian', '9.4')
 
 class SSH(ssh):
     def __init__(self,*args,**kwargs):
+        if("logfile" in kwargs):
+            logging=open(kwargs["logfile"],"w")
+            del kwargs["logfile"]
+        else:
+            logging=open(os.ttyname(sys.stdout.fileno()),"w")
         super(SSH, self).__init__(*args, **kwargs)
-        self.monitor=self.SSHMonitor(self)
+        self.monitor=self.SSHMonitor(self,logging)
         self.monitor.start()
     class SSHMonitor(threading.Thread):
-        def __init__(self,ssh_connection):
+        def __init__(self,ssh_connection,logging):
             self.s=ssh_connection
+            self.logging=logging
             self.commands=[]
             threading.Thread.__init__(self)
             self.daemon=True
@@ -19,30 +24,18 @@ class SSH(ssh):
         def run(self):
             while(True):
                 for c in self.commands:
-                    result=s.run_to_end(c[0])
+                    result=self.s.run_to_end(c[0])
                     if(c[1]==False):
                         c[1]=result[0]
                         c[2]=result[1]
-                        print "Command",c[0],"first got executed, result:",c[1],"with return value",c[2]
+                        print >>self.logging, "Command",c[0],"first got executed on",self.s.host,", result:",c[1],"with return value",c[2]
                     elif(result[0]!=c[1] or result[1]!=c[2]):
-                        print "Command",c[0],"changed results:\nOld result:",c[1],"with return value",c[2],"\nNew result:",result[0],"with return value",result[1]
+                        print >>self.logging, "Command",c[0],"on",self.s.host,"changed results:\nOld result:",c[1],"with return value",c[2],"\nNew result:",result[0],"with return value",result[1]
                         c[1]=result[0]
                         c[2]=result[1]
                 time.sleep(5)
     #copied official code to make sure our monitor can be accessed
     def __getattr__(self, attr):
-        """Permits member access to run commands over SSH
-        Examples:
-            >>> s =  ssh(host='example.pwnme',
-            ...         user='travis',
-            ...         password='demopass')
-            >>> s.echo('hello')
-            'hello'
-            >>> s.whoami()
-            'travis'
-            >>> s.echo(['huh','yay','args'])
-            'huh yay args'
-        """
         bad_attrs = [
             'trait_names',          # ipython tab-complete
         ]
@@ -61,20 +54,3 @@ class SSH(ssh):
 
             return self.run(command).recvall().strip()
         return runner
-
-
-
-s=SSH(host="rkevin.ddns.net",user="pi",keyfile="/home/rkevin/.ssh/id_rsa",port=38467)
-print s.distro
-print s.uname("-a")
-s.monitor.add("uname -a")
-s.monitor.add("date")
-
-time.sleep(20)
-
-'''usage:
-sshmon=SSHMonitor(s)
-sshmon.add("uname -a")
-sshmon.add("date")
-sshmon.run()
-'''
