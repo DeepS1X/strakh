@@ -1,2 +1,28 @@
+# Patch MS08-067 if XP/W2K
+# Patch Vista/7/2k8 MS09_050
+# ALWAYS PATCH ETERNAL-series exploits
+# Disable SMB if possible
+# If not, make sure only authenticated users allowed
+# NO NULL SESSIONS
+
+# Ban all ports if you can, otherwise, try
+
+# Enable UAC
+
+# Enable defender
+
+# Change ALL the passwords if you can
+
+# Check autoruns
+
+# Check logs with event viewer
+
+# Install some sort of network monitoring
+
+
+
+# Did I mention change the passwords?
+# If not... GO DO IT.
+
 # Read this, and use autoruns to detect malware. Malwarebytes may save you if they use meterpreter, else AV is s*****d
 https://resources.infosecinstitute.com/common-malware-persistence-mechanisms/#gref
