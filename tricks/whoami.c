@@ -1,5 +1,5 @@
 #include <stdio.h>
 
 int main() {
-  printf("vmuser\n");
+  printf("nobody\n");
 }
