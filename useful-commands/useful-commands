@@ -1,0 +1,137 @@
+
+# Locks an account
+passwd -l [Username]
+# Unlock an account
+passwd -u [Username]
+# Change account password
+passwd [Username]
+
+# View interesting logs:
+
+# Authentication logs
+cat /var/log/auth.log 
+cat /var/log/secure
+
+# Use acct:
+# Print login/logout stats
+ac 
+
+# Print last commands of usr
+lastcomm
+
+# SSH Hardening:
+# Disable keyless login (DON'T DO THIS UNLESS ALL OF OUR KEYS ARE ON THE MACHINE)
+echo "PermitRootLogin prohibit-password" >> /etc/ssh/sshd_config
+# Disable login to all but [Username]
+echo "AllowUsers [Username]" >> /etc/ssh/sshd_config
+
+
+# Check ports:
+netstat -auntp
+lsof -i
+
+# Check running processes
+ps aux
+
+# Services (Debian and related distros):
+# Stop:
+service [service name] stop
+# Disable: 
+service [service name] disable
+# Start
+service [service name] start
+# Enable
+service [service name] enable
+
+# Add/remove/update/upgrade software on (Debian and related distros)
+apt install [software]
+apt remove [software]
+apt update
+apt upgrade
+
+
+# RUN LYNIS AND FOLLOW THE DIRECTIONS FOR HARDENING.
+
+# Show all ssh dirs
+find /root -name .ssh
+find /home -name .ssh
+# Then cat each file in those dirs to make sure they aren't an enemy key
+
+# Check cronjobs for evil programs:
+#/etc/cron.d/       
+#/etc/cron.daily/   
+#/etc/cron.hourly/  
+#/etc/cron.monthly/ 
+#/etc/cron.weekly/
+#/etc/crontab
+#/var/spool/cron/crontabs
+
+# Check user .bash_profile and .bashrc for evil scripts
+
+# Run chkrootkit and rkhunter
+
+# If your lsmod doesn't look somewhat like this, there may be some sort of kernel-mode rootkit.
+# lsmod
+#Module                  Size  Used by
+#ipt_REJECT             16384  2
+#nf_reject_ipv4         16384  1 ipt_REJECT
+#nf_conntrack_ipv4      16384  8
+#nf_defrag_ipv4         16384  1 nf_conntrack_ipv4
+#xt_conntrack           16384  8
+#nf_conntrack          155648  2 xt_conntrack,nf_conntrack_ipv4
+#libcrc32c              16384  1 nf_conntrack
+#xt_tcpudp              16384  6
+#iptable_filter         16384  1
+#fuse                  122880  3
+#bochs_drm              24576  3
+#ttm                   131072  1 bochs_drm
+#ppdev                  20480  0
+#drm_kms_helper        196608  1 bochs_drm
+#sg                     36864  0
+#joydev                 24576  0
+#drm                   471040  6 drm_kms_helper,bochs_drm,ttm
+#evdev                  28672  10
+#parport_pc             32768  0
+#pcspkr                 16384  0
+#parport                57344  2 parport_pc,ppdev
+#serio_raw              16384  0
+#button                 16384  0
+#binfmt_misc            20480  1
+#ip_tables              28672  1 iptable_filter
+#x_tables               45056  5 xt_conntrack,iptable_filter,xt_tcpudp,ipt_REJECT,ip_tables
+#autofs4                49152  2
+#ext4                  741376  1
+#crc16                  16384  1 ext4
+#mbcache                16384  1 ext4
+#jbd2                  118784  1 ext4
+#crc32c_generic         16384  3
+#fscrypto               32768  1 ext4
+#ecb                    16384  0
+#crypto_simd            16384  0
+#cryptd                 28672  1 crypto_simd
+#glue_helper            16384  0
+#aes_x86_64             20480  0
+#sd_mod                 53248  3
+#sr_mod                 28672  0
+#cdrom                  69632  1 sr_mod
+#ata_generic            16384  0
+#floppy                 86016  0
+#psmouse               172032  0
+#ata_piix               36864  2
+#i2c_piix4              24576  0
+#e1000                 155648  0
+#libata                278528  2 ata_piix,ata_generic
+#scsi_mod              253952  4 sd_mod,libata,sg,sr_mod
+
+# If this command returns something other than just a line containing root, grab me ASAP.
+awk -F: '($3 == "0") {print}' /etc/passwd
+
+# If you don't see anything yet, look again using this link:
+# https://searchsecurity.techtarget.com/feature/Malware-Forensics-Field-Guide-for-Linux-Systems
+# That means checking service startups, running ClamAV, looking at .profile stuff
+# Follow the whole article. Check everywhere. Check again. They are already in the system, you just haven't found them yet.
+
+# If for some reason you have time and/or are insane, you can do a full live memory analysis:
+# http://www.rekall-forensic.com/home
+
+
