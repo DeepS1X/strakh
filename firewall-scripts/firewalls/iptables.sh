@@ -66,12 +66,20 @@ iptables -A OUTPUT -p tcp --dport 53 -d $dnsserver -j ACCEPT
 # Add externally accessible sites for servers and clients within network
 # You should add package repositories for your teammates here
 
-echo "Whitelisting FORWARD:"
+echo "Whitelisting FORWARD OUT:"
 while read p; do
   temp=$(host $p | grep "has address" | head -n 1 | cut -d " " -f 4)
   echo "$p $temp"
   iptables -A FORWARD -p tcp -m multiport --dport 80,443 -d $temp -j ACCEPT
 done < forwarddomains.txt
+
+echo "Whitelisting FORWARD IN:"
+while read p; do
+  ip=$(echo $p | cut -d ":" -f 1)
+  ports=$(echo $p | cut -d ":" -f 2)
+  iptables -A FORWARD -p tcp -m multiport --dport $ports -d $temp -j ACCEPT
+  echo "$ip $port"
+done < inputips
 
 # Consider disabling outbound DNS if you detect cobaltstrike beacon / DNS based malware
 # iptables -A FORWARD -p tcp --dport 80 -d 8.8.8.8 -j ACCEPT
