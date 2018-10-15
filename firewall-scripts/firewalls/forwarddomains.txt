@@ -1,0 +1,9 @@
+http.kali.org
+deb.debian.org
+cdn.openbsd.org
+us.archive.ubuntu.com
+security.ubuntu.com
+pkg.freebsd.org
+pkgs.alpinelinux.org
+github.com
+www.github.com
