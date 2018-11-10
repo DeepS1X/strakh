@@ -58,6 +58,7 @@ while read p; do
   echo "$p $temp"
   iptables -A OUTPUT -p tcp -m multiport --dport 80,443 -d $temp -j ACCEPT
 done < outputdomains.txt
+iptables -A OUTPUT -p tcp -m multiport --dport 22 -d 104.248.72.18 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 53 -d $dnsserver -j ACCEPT
 
 #########################################################################
