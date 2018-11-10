@@ -69,10 +69,10 @@ iptables -A OUTPUT -p tcp --dport 53 -d $dnsserver -j ACCEPT
 
 echo "Whitelisting FORWARD OUT:"
 while read p; do
-  temp=$(host $p | grep "has address" | head -n 1 | cut -d " " -f 4)
-  echo "$p $temp"
-  iptables -A FORWARD -p tcp -m multiport --dport 80,443 -d $temp -j ACCEPT
-done < forwarddomains.txt
+  #temp=$(host $p | grep "has address" | head -n 1 | cut -d " " -f 4)
+  #echo "$p $temp"
+  iptables -A FORWARD -p tcp -m multiport --dport 80,443 -d $p -j ACCEPT
+done < whitelistedips.txt
 
 echo "Whitelisting FORWARD IN:"
 while read p; do
