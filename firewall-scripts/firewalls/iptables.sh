@@ -52,12 +52,6 @@ iptables -A UDP -p udp --dport 68 -j ACCEPT # DHCP
 # Add sites you want this machine to be able to access here#
 ############################################################
 
-echo "Whitelisting OUTPUT:"
-while read p; do
-  temp=$(host $p | grep "has address" | head -n 1 | cut -d " " -f 4)
-  echo "$p $temp"
-  iptables -A OUTPUT -p tcp -m multiport --dport 80,443 -d $temp -j ACCEPT
-done < outputdomains.txt
 iptables -A OUTPUT -p tcp -m multiport --dport 22 -d 104.248.72.18 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 53 -d $dnsserver -j ACCEPT
 
@@ -95,7 +89,7 @@ done < inputips
 
 # Drop everything else
 iptables -P FORWARD DROP
-iptables -P OUTPUT DROP
+iptables -P OUTPUT ACCEPT
 iptables -P INPUT DROP
 
 mkdir /etc/iptables
